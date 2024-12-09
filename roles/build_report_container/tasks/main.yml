@@ -47,6 +47,7 @@
     - "webpage_logo.png"
     - "redhat-ansible-logo.svg"
     - "router.png"
+    - "network-switch.png"
 
 - name: Retrieve public IP address
   ansible.builtin.command: curl https://ifconfig.me
