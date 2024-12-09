@@ -15,6 +15,14 @@
 
   tasks:
 
-    - name: Build a report
+    - name: Build pre-patching report
       ansible.builtin.include_role:
         name: "../roles/build_report_container"
+      vars:
+        report_type: "pre"
+
+    - name: Build post-patching report
+      ansible.builtin.include_role:
+        name: "../roles/build_report_container"
+      vars:
+        report_type: "post"
