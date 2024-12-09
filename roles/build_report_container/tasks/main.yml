@@ -24,11 +24,23 @@
       - "{{ file_path }}:/usr/share/nginx/html:Z"
     recreate: true
 
-- name: Create HTML report
-  ansible.builtin.template:
+# - name: Create HTML report
+#   ansible.builtin.template:
+#     src: report.j2
+#     dest: "{{ file_path }}/index.html"
+#     mode: "644"
+
+- name: Create HTML report from template
+  template:
     src: report.j2
-    dest: "{{ file_path }}/index.html"
-    mode: "644"
+    dest: "{{ report_dir }}/switch-firmware-{{ report_type }}-patching-report.html"
+    mode: '0644'
+
+- name: Create index.html file
+  template:
+    src: index.j2
+    dest: "{{ report_dir }}/index-{{ report_type }}-patching.html"
+    mode: '0644'
 
 - name: Copy CSS over
   ansible.builtin.copy:
@@ -47,7 +59,8 @@
     - "webpage_logo.png"
     - "redhat-ansible-logo.svg"
     - "router.png"
-    - "network-switch.png"
+    - "network-switch-pre-patching.png"
+    - "network-switch-post-patching.png"
 
 - name: Retrieve public IP address
   ansible.builtin.command: curl https://ifconfig.me
