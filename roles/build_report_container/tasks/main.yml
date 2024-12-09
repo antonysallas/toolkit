@@ -5,12 +5,14 @@
   ansible.builtin.set_fact:
     timestamp: "{{ lookup('pipe', 'date +%Y%m%d%H%M%S') }}"
     date_stamp: "{{ lookup('pipe', 'date +%Y%m%d') }}"
+    readable_date: "{{ lookup('pipe', 'date \"+%B %d, %Y\"') }}"
 
 - name: Debug timestamp and paths
   ansible.builtin.debug:
     msg:
     - "Timestamp: {{ timestamp }}"
     - "Date stamp: {{ date_stamp }}"
+    - "Readable date: {{ readable_date }}"
     - "Report type: {{ report_type }}"
     - "Report directory: {{ report_dir }}"
 
