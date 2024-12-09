@@ -18,6 +18,7 @@
     <div class="container-fluid">
       <div class="row align-items-center">
         <div class="col">
+          {% if date_stamp %}
           <div class="breadcrumb-wrapper">
             <button class="back-button" onclick="window.history.back()">
               <i class="fas fa-arrow-left"></i>
@@ -28,6 +29,7 @@
               {% endblock %}
             </span>
           </div>
+          {% endif %}
         </div>
         <div class="col-auto">
           <button class="theme-toggle" id="themeToggle">
