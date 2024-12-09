@@ -47,11 +47,11 @@
     recurse: true
     patterns: "*-patching-report.html"
     file_type: file
-  register: all_reports
+  register: found_reports
 
 - name: Debug found reports
   ansible.builtin.debug:
-    var: all_reports
+    var: found_reports
 
 - name: Ensure Nginx container is running
   containers.podman.podman_container:
