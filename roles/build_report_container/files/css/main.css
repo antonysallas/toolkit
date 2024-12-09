@@ -207,8 +207,14 @@ p.internal_label {
 }
 
 /* roles/build_report_container/files/css/main.css */
-.reports-list {
+/* .reports-list {
     margin: 20px;
+    padding: 20px;
+} */
+
+.reports-list {
+    margin: 2rem auto;
+    max-width: 1200px;
     padding: 20px;
 }
 
@@ -233,4 +239,15 @@ p.internal_label {
 
 .reports-list a:hover {
     text-decoration: underline;
+}
+
+.report-card {
+    margin-bottom: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.report-date {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-bottom: 1px solid #dee2e6;
 }

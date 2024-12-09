@@ -37,7 +37,10 @@
   ansible.builtin.find:
     paths: "{{ report_dir }}"
     recurse: yes
-    patterns: "*-patching-report.html"
+    patterns:
+      - "*pre-patching-report.html"
+      - "*post-patching-report.html"
+    file_type: file
   register: found_reports
 
 - name: Debug found reports
