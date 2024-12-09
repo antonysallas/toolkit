@@ -73,8 +73,14 @@
   ansible.builtin.debug:
     msg: "{{ hostvars[inventory_hostname] }}"
 
-# Then modify the task to use correct variable
+# roles/build_report/tasks/main.yml
+
+# First debug the facts
+- name: Debug connection info
+  ansible.builtin.debug:
+    msg: "Current host: {{ inventory_hostname }}"
+
+# Then update the display link task
 - name: Display link to inventory report
   ansible.builtin.debug:
-    msg: "Report available at http://{{ ansible_facts['default_ipv4']['address'] }}:{{ web_port }}/index.html"
-  when: ansible_facts['default_ipv4'] is defined
+    msg: "Report available at http://{{ inventory_hostname }}:{{ web_port }}/index.html"
