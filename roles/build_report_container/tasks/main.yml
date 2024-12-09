@@ -6,17 +6,16 @@
     timestamp: "{{ lookup('pipe', 'date +%Y%m%d%H%M%S') }}"
     date_stamp: "{{ lookup('pipe', 'date +%Y%m%d') }}"
 
-
-- name: Creates directory
+- name: Create report directory
   ansible.builtin.file:
-    path: "{{ file_path }}"
+    path: "{{ report_dir }}"
     state: directory
     mode: "775"
     recurse: true
 
 - name: Create dated directory
   ansible.builtin.file:
-    path: "{{ file_path }}/{{ date_stamp }}"
+    path: "{{ report_dir }}/{{ date_stamp }}"
     state: directory
     mode: "775"
     recurse: true
@@ -24,9 +23,26 @@
 - name: Include selinux role
   vars:
     selinux_fcontexts:
-      - {target: '{{ file_path }}(/.*)?', setype: 'httpd_sys_content_t', state: 'present'}
+      - {target: '{{ report_dir }}(/.*)?', setype: 'httpd_sys_content_t', state: 'present'}
   ansible.builtin.include_role:
     name: fedora.linux_system_roles.selinux
+
+- name: Debug file paths
+  ansible.builtin.debug:
+    msg:
+    - "File path: {{ report_dir }}"
+    - "Full glob path: {{ report_dir + '/*/' }}"
+
+- name: List available reports
+  ansible.builtin.find:
+    paths: "{{ report_dir }}"
+    recurse: yes
+    patterns: "*-patching-report.html"
+  register: found_reports
+
+- name: Debug found reports
+  ansible.builtin.debug:
+    var: found_reports
 
 - name: Ensure Nginx container is running
   containers.podman.podman_container:
@@ -36,32 +52,32 @@
     ports:
       - "{{ web_port }}:80"
     volumes:
-      - "{{ file_path }}:/usr/share/nginx/html:Z"
+      - "{{ report_dir }}:/usr/share/nginx/html:Z"
     recreate: true
 
 - name: Create HTML report from template
   template:
     src: report.j2
-    dest: "{{ file_path }}/{{ date_stamp }}/{{ timestamp }}_switch-firmware-{{ report_type }}-patching-report.html"
+    dest: "{{ report_dir }}/{{ date_stamp }}/{{ timestamp }}_switch-firmware-{{ report_type }}-patching-report.html"
     mode: '0644'
 
 - name: Create main index.html file
   template:
     src: index.j2
-    dest: "{{ file_path }}/index.html"
+    dest: "{{ report_dir }}/index.html"
     mode: '0644'
 
 - name: Copy CSS over
   ansible.builtin.copy:
     src: "css"
-    dest: "{{ file_path }}"
+    dest: "{{ report_dir }}"
     directory_mode: true
     mode: "775"
 
 - name: Copy CSS over
   ansible.builtin.copy:
     src: "{{ item }}"
-    dest: "{{ file_path }}"
+    dest: "{{ report_dir }}"
     directory_mode: true
     mode: "644"
   loop:
