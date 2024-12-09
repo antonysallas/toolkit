@@ -14,7 +14,7 @@
         </center>
 
         <div class="reports-list">
-            {% for folder in lookup('ansible.builtin.fileglob', file_path + '/*/') | sort(reverse=true) %}
+            {% for folder in lookup('ansible.builtin.fileglob', report_dir + '/*/') | sort(reverse=true) %}
                 {% set folder_name = folder.split('/')[-2] %}
                 <h2>Date: {{ folder_name }}</h2>
                 <ul>
