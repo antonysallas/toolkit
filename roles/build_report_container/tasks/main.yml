@@ -39,7 +39,7 @@
 - name: Create index.html file
   template:
     src: index.j2
-    dest: "{{ report_dir }}/index-{{ report_type }}-patching.html"
+    dest: "{{ file_path }}/index-{{ report_type }}-patching.html"
     mode: '0644'
 
 - name: Copy CSS over
