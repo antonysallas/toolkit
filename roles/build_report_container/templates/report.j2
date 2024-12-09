@@ -4,7 +4,7 @@
   <title>Network Automation Report</title>
   <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Open+Sans" />
   <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-  <link rel="stylesheet" href="{{ report_dir }}/css/main.css">
+  <link rel="stylesheet" href="../css/main.css">
   <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script>
@@ -38,7 +38,7 @@ collapsible: true
         <tr>
             <td class="summary_info">
               <div id="hostname">
-              <p class="hostname"><img class="router_image" src="{{ report_dir }}/network-switch-{{ report_type }}-patching.png" alt="picture of network device">{{ hostvars[network_switch].ansible_net_hostname }}</p>
+              <p class="hostname"><img class="router_image" src="../network-switch-{{ report_type }}-patching.png" alt="picture of network device">{{ hostvars[network_switch].ansible_net_hostname }}</p>
             </div>
               <div id="net_info_div">
               <table class="net_info">
