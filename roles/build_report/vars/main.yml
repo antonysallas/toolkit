@@ -1,6 +1,6 @@
 report_dir: /var/www/html/
 web_host: ansible-1
-web_port: 8088
+web_port: 9088
 # multi key, same value lookup for cisco
 vendor:
   ios: &my_value 'Cisco'
