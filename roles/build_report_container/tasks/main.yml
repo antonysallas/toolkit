@@ -1,10 +1,18 @@
 ---
 # roles/build_report_container/tasks/main.yml
-- name: GEt timestamp
+- name: Get timestamp
   run_once: true
   ansible.builtin.set_fact:
     timestamp: "{{ lookup('pipe', 'date +%Y%m%d%H%M%S') }}"
     date_stamp: "{{ lookup('pipe', 'date +%Y%m%d') }}"
+
+- name: Debug timestamp and paths
+  ansible.builtin.debug:
+    msg:
+    - "Timestamp: {{ timestamp }}"
+    - "Date stamp: {{ date_stamp }}"
+    - "Report type: {{ report_type }}"
+    - "Report directory: {{ report_dir }}"
 
 - name: Create report directory
   ansible.builtin.file:
@@ -33,19 +41,17 @@
     - "File path: {{ report_dir }}"
     - "Full glob path: {{ report_dir + '/*/' }}"
 
-- name: List available reports
+- name: List available reports (debug)
   ansible.builtin.find:
-    paths: "{{ report_dir }}"
-    recurse: yes
-    patterns:
-      - "*pre-patching-report.html"
-      - "*post-patching-report.html"
+    paths: "{{ file_path }}"
+    recurse: true
+    patterns: "*-patching-report.html"
     file_type: file
-  register: found_reports
+  register: all_reports
 
 - name: Debug found reports
   ansible.builtin.debug:
-    var: found_reports
+    var: all_reports
 
 - name: Ensure Nginx container is running
   containers.podman.podman_container:
