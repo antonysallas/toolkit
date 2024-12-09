@@ -48,7 +48,7 @@ collapsible: true
                       <img class="router_image me-3" src="../network-switch-{{ report_type }}-patching.png" alt="picture of network device" style="width: 50px;">
                       <h5 class="card-title mb-0">{{ hostvars[network_switch].ansible_net_hostname }}</h5>
                     </div>
-
+                    <div id="net_info_div">
                     <table class="table table-sm">
                       <tbody>
                         <tr>
@@ -59,15 +59,20 @@ collapsible: true
                           <td class="fw-bold">Code Version</td>
                           <td>{{ hostvars[network_switch]['ansible_net_version'] }}</td>
                         </tr>
+                        <tr>
+                          <td class="fw-bold">Model</td>
+                          <td>{{ hostvars[network_switch]['ansible_net_model'] }}</td>
+                        </tr>
+                        <tr>
+                          <td class="fw-bold">Serial Number</td>
+                          <td>{{ hostvars[network_switch]['ansible_net_serialnum'] }}</td>
+                        </tr>
                       </tbody>
                     </table>
-                  </div>
-                </div>
-              </td>
 
-            {% include 'ansible.j2' %}
-          </div>
-            </td>
+                    {% include 'ansible.j2' %}
+                    </div>
+  </td>
 
             <td>
             {% include 'interfaces.j2' %}

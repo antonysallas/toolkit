@@ -68,6 +68,18 @@
   vars:
     date_stamp: "{{ date_stamp }}"
 
+- name: List available reports (debug)
+  ansible.builtin.find:
+    paths: "{{ report_dir }}"
+    recurse: true
+    patterns: "*-patching-report.html"
+    file_type: file
+  register: found_reports
+
+- name: Debug found reports
+  ansible.builtin.debug:
+    var: found_reports
+
 - name: Create main index.html file
   template:
     src: index.j2
@@ -92,18 +104,6 @@
     - "router.png"
     - "network-switch-pre-patching.png"
     - "network-switch-post-patching.png"
-
-- name: List available reports (debug)
-  ansible.builtin.find:
-    paths: "{{ report_dir }}"
-    recurse: true
-    patterns: "*-patching-report.html"
-    file_type: file
-  register: found_reports
-
-- name: Debug found reports
-  ansible.builtin.debug:
-    var: found_reports
 
 - name: Retrieve public IP address
   ansible.builtin.command: curl https://ifconfig.me
