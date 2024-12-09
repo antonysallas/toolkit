@@ -1,7 +1,20 @@
 ---
+# roles/build_report_container/tasks/main.yml
+- name: Get timestamp
+  ansible.builtin.set_fact:
+    date_stamp: "{{ ansible_date_time.date | regex_replace('-','') }}"
+    timestamp: "{{ ansible_date_time.iso8601_basic_short | regex_replace(':','') }}"
+
 - name: Creates directory
   ansible.builtin.file:
     path: "{{ file_path }}"
+    state: directory
+    mode: "775"
+    recurse: true
+
+- name: Create dated directory
+  ansible.builtin.file:
+    path: "{{ file_path }}/{{ date_stamp }}"
     state: directory
     mode: "775"
     recurse: true
@@ -24,22 +37,16 @@
       - "{{ file_path }}:/usr/share/nginx/html:Z"
     recreate: true
 
-# - name: Create HTML report
-#   ansible.builtin.template:
-#     src: report.j2
-#     dest: "{{ file_path }}/index.html"
-#     mode: "644"
-
 - name: Create HTML report from template
   template:
     src: report.j2
-    dest: "{{ file_path }}/switch-firmware-{{ report_type }}-patching-report.html"
+    dest: "{{ file_path }}/{{ date_stamp }}/{{ timestamp }}_switch-firmware-{{ report_type }}-patching-report.html"
     mode: '0644'
 
-- name: Create index.html file
+- name: Create main index.html file
   template:
     src: index.j2
-    dest: "{{ file_path }}/index-{{ report_type }}-patching.html"
+    dest: "{{ file_path }}/index.html"
     mode: '0644'
 
 - name: Copy CSS over

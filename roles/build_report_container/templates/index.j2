@@ -1,0 +1,35 @@
+{# roles/build_report_container/templates/index.j2 #}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Network Switch Firmware Patching Reports</title>
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Open+Sans" />
+    <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+    {% include 'header.j2' %}
+    <section>
+        <center>
+            <h1>Switch Firmware Patching Reports</h1>
+        </center>
+
+        <div class="reports-list">
+            {% for folder in lookup('ansible.builtin.fileglob', file_path + '/*/').split(',') | sort(reverse=true) %}
+                {% set folder_name = folder.split('/')[-2] %}
+                <h2>Date: {{ folder_name }}</h2>
+                <ul>
+                {% for report in lookup('ansible.builtin.fileglob', folder + '*-patching-report.html').split(',') | sort(reverse=true) %}
+                    {% set report_name = report.split('/')[-1] %}
+                    <li>
+                        <a href="{{ folder_name }}/{{ report_name }}">
+                            {% if 'pre-patching' in report_name %}Pre-Patching Report{% else %}Post-Patching Report{% endif %}
+                            ({{ report_name.split('_')[0] }})
+                        </a>
+                    </li>
+                {% endfor %}
+                </ul>
+            {% endfor %}
+        </div>
+    </section>
+</body>
+</html>

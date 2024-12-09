@@ -205,3 +205,32 @@ table.net_info {
 p.internal_label {
     color: #000000;
 }
+
+/* roles/build_report_container/files/css/main.css */
+.reports-list {
+    margin: 20px;
+    padding: 20px;
+}
+
+.reports-list h2 {
+    color: #333;
+    margin-top: 20px;
+}
+
+.reports-list ul {
+    list-style: none;
+    padding-left: 20px;
+}
+
+.reports-list li {
+    margin: 10px 0;
+}
+
+.reports-list a {
+    color: #0066cc;
+    text-decoration: none;
+}
+
+.reports-list a:hover {
+    text-decoration: underline;
+}
