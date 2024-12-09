@@ -1,20 +1,63 @@
 {# roles/build_report_container/templates/report.j2 #}
 {% extends "base.j2" %}
 
+{% block title %}
+{{ report_type|title }} Patching Report - {{ date_stamp }}
+{% endblock %}
+
 {% block breadcrumb %}
-Home / Reports / {{ report_type|title }} Patching Report
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb mb-0">
+    <li class="breadcrumb-item"><a href="{% if date_stamp %}../{% endif %}index.html">Home</a></li>
+    <li class="breadcrumb-item"><a href="{% if date_stamp %}../{% endif %}#{{ date_stamp }}">Reports</a></li>
+    <li class="breadcrumb-item active" aria-current="page">{{ report_type|title }} Patching Report</li>
+  </ol>
+</nav>
 {% endblock %}
 
 {% block content %}
 <div class="container-fluid mt-4">
   <section>
+    {# Report Header #}
     <div class="text-center mb-5">
-      <h1 class="display-4">Switch Firmware {% if report_type == 'pre' %}Pre{% else %}Post{% endif %}-Patching Report
+      <h1 class="display-4">
+        Switch Firmware {% if report_type == 'pre' %}Pre{% else %}Post{% endif %}-Patching Report
       </h1>
+      <p class="text-muted">Generated on {{ date_stamp }}</p>
     </div>
 
-    <div class="accordion" id="networkAccordion">
-      <table class="table table-striped table-hover">
+    {# Report Summary #}
+    <div class="row mb-4">
+      <div class="col-md-3">
+        <div class="card">
+          <div class="card-body text-center">
+            <h5 class="card-title">Total Devices</h5>
+            <p class="h2">{{ groups['network']|length }}</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card">
+          <div class="card-body text-center">
+            <h5 class="card-title">Status</h5>
+            <p class="h4">{{ report_type|title }} Patching</p>
+          </div>
+        </div>
+      </div>
+      {# Add more summary cards as needed #}
+    </div>
+
+    {# Search and Filter Controls #}
+    <div class="mb-4">
+      <div class="input-group">
+        <span class="input-group-text"><i class="fas fa-search"></i></span>
+        <input type="text" class="form-control" id="deviceSearch" placeholder="Search devices...">
+      </div>
+    </div>
+
+    {# Main Content Table #}
+    <div class="table-responsive">
+      <table class="table table-striped table-hover" id="networkTable">
         <thead class="table-dark sticky-top">
           <tr>
             <th scope="col" style="width: 25%">Network Device</th>
@@ -26,22 +69,24 @@ Home / Reports / {{ report_type|title }} Patching Report
         <tbody>
           {% for network_switch in groups['network']|sort %}
           {% if hostvars[network_switch].ansible_facts.network_resources is defined %}
-          <tr>
+          <tr class="device-row">
             <td>
               <div class="card">
                 <div class="card-body">
                   <div class="d-flex align-items-center mb-3">
                     <img class="router_image me-3" src="../network-switch-{{ report_type }}-patching.png"
-                      alt="picture of network device" style="width: 50px;">
+                      alt="Network switch icon" width="50" height="50">
                     <h5 class="card-title mb-0">{{ hostvars[network_switch].ansible_net_hostname }}</h5>
                   </div>
-                  <div id="net_info_div">
+                  <div class="device-info">
                     <table class="table table-sm">
                       <tbody>
                         <tr>
                           <td class="fw-bold">Platform</td>
-                          <td>{% set ansible_network_os = hostvars[network_switch]['ansible_net_system'] %}{{
-                            vendor[ansible_network_os]}} {{hostvars[network_switch]['ansible_net_system'] }}</td>
+                          <td>
+                            {% set ansible_network_os = hostvars[network_switch]['ansible_net_system'] %}
+                            {{ vendor[ansible_network_os] }} {{ hostvars[network_switch]['ansible_net_system'] }}
+                          </td>
                         </tr>
                         <tr>
                           <td class="fw-bold">Code Version</td>
@@ -57,14 +102,12 @@ Home / Reports / {{ report_type|title }} Patching Report
                         </tr>
                       </tbody>
                     </table>
-
                     {% include 'ansible.j2' %}
                   </div>
+                </div>
+              </div>
             </td>
-
-            <td>
-              {% include 'interfaces.j2' %}
-            </td>
+            <td>{% include 'interfaces.j2' %}</td>
             <td>
               {% include 'vlans.j2' %}
               {% include 'lldp_interfaces.j2' %}
@@ -83,6 +126,52 @@ Home / Reports / {{ report_type|title }} Patching Report
           {% endfor %}
         </tbody>
       </table>
+    </div>
+
+    {# No Data Message #}
+    {% if not groups['network']|length %}
+    <div class="alert alert-info">
+      No network devices found in the inventory.
+    </div>
+    {% endif %}
   </section>
 </div>
+
+{# Loading Indicator #}
+<div id="loadingIndicator" class="position-fixed top-0 start-0 w-100 h-100 d-none">
+  <div class="d-flex justify-content-center align-items-center h-100 bg-white bg-opacity-75">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // Search functionality
+    const searchInput = document.getElementById('deviceSearch');
+    const deviceRows = document.querySelectorAll('.device-row');
+
+    searchInput.addEventListener('input', function () {
+      const searchTerm = this.value.toLowerCase();
+      deviceRows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(searchTerm) ? '' : 'none';
+      });
+    });
+
+    // Loading indicator
+    window.addEventListener('beforeunload', function () {
+      document.getElementById('loadingIndicator').classList.remove('d-none');
+    });
+
+    // Initialize tooltips
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+  });
+</script>
 {% endblock %}
