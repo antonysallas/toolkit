@@ -261,3 +261,24 @@ p.internal_label {
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   border-radius: 8px;
 }
+
+.accordion-body {
+  overflow: auto;
+  max-height: 80vh;
+}
+
+.table td {
+  vertical-align: top;
+}
+
+.sticky-top {
+  z-index: 1020;
+}
+
+.container-fluid {
+  max-width: 95%;
+}
+
+.table > :not(caption) > * > * {
+  padding: 1rem;
+}
