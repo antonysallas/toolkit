@@ -41,18 +41,6 @@
     - "File path: {{ report_dir }}"
     - "Full glob path: {{ report_dir + '/*/' }}"
 
-- name: List available reports (debug)
-  ansible.builtin.find:
-    paths: "{{ report_dir }}"
-    recurse: true
-    patterns: "*-patching-report.html"
-    file_type: file
-  register: found_reports
-
-- name: Debug found reports
-  ansible.builtin.debug:
-    var: found_reports
-
 - name: Ensure Nginx container is running
   containers.podman.podman_container:
     name: nginx_container
@@ -62,8 +50,8 @@
       - "{{ web_port }}:80"
     volumes:
       - "{{ report_dir }}:/usr/share/nginx/html:Z"
-    # restart_policy: always
-    recreate: true
+    restart_policy: always
+    # recreate: true
 
 - name: Ensure report directory permissions
   ansible.builtin.file:
@@ -77,6 +65,8 @@
     src: report.j2
     dest: "{{ report_dir }}/{{ date_stamp }}/{{ timestamp }}_switch-firmware-{{ report_type }}-patching-report.html"
     mode: '0644'
+  vars:
+    date_stamp: "{{ date_stamp }}"
 
 - name: Create main index.html file
   template:
@@ -98,11 +88,22 @@
     directory_mode: true
     mode: "644"
   loop:
-    - "webpage_logo.png"
     - "redhat-ansible-logo.svg"
     - "router.png"
     - "network-switch-pre-patching.png"
     - "network-switch-post-patching.png"
+
+- name: List available reports (debug)
+  ansible.builtin.find:
+    paths: "{{ report_dir }}"
+    recurse: true
+    patterns: "*-patching-report.html"
+    file_type: file
+  register: found_reports
+
+- name: Debug found reports
+  ansible.builtin.debug:
+    var: found_reports
 
 - name: Retrieve public IP address
   ansible.builtin.command: curl https://ifconfig.me

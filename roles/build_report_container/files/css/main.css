@@ -251,3 +251,13 @@ p.internal_label {
     padding: 1rem;
     border-bottom: 1px solid #dee2e6;
 }
+
+.router_image {
+  max-width: 50px;
+  height: auto;
+}
+
+.table-responsive {
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  border-radius: 8px;
+}
