@@ -33,7 +33,7 @@
 - name: Create HTML report from template
   template:
     src: report.j2
-    dest: "{{ report_dir }}/switch-firmware-{{ report_type }}-patching-report.html"
+    dest: "{{ file_path }}/switch-firmware-{{ report_type }}-patching-report.html"
     mode: '0644'
 
 - name: Create index.html file
