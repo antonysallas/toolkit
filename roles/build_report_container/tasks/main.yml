@@ -43,7 +43,7 @@
 
 - name: List available reports (debug)
   ansible.builtin.find:
-    paths: "{{ file_path }}"
+    paths: "{{ report_dir }}"
     recurse: true
     patterns: "*-patching-report.html"
     file_type: file
