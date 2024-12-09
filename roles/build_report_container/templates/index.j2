@@ -14,21 +14,26 @@
         </center>
 
         <div class="reports-list">
-            {% for folder in lookup('ansible.builtin.fileglob', report_dir + '/*/') | sort(reverse=true) %}
-                {% set folder_name = folder.split('/')[-2] %}
-                <h2>Date: {{ folder_name }}</h2>
-                <ul>
-                {% for report in lookup('ansible.builtin.fileglob', folder + '*-patching-report.html') | sort(reverse=true) %}
-                    {% set report_name = report.split('/')[-1] %}
-                    <li>
-                        <a href="{{ folder_name }}/{{ report_name }}">
-                            {% if 'pre-patching' in report_name %}Pre-Patching Report{% else %}Post-Patching Report{% endif %}
-                            ({{ report_name.split('_')[0] }})
-                        </a>
-                    </li>
+            {% set report_files = found_reports.files | default([]) %}
+            {% if report_files %}
+                {% for report in report_files | sort(attribute='path', reverse=true)%}
+                    {% set path_parts = report.path.split('/') %}
+                    {% set date_folder = path_parts[-2] %}
+                    {% set report_name = path_parts[-1] %}
+
+                    <h2>Date: {{ date_folder }} </h2>
+                    <ul>
+                        <li>
+                            <a href="{{ date_folder }}/{{ report_name }}">
+                                {% if 'pre-patching' in report_name %}Pre-Patching Report{% else %}Post-Patching Report{% endif %}
+                                ({{ report_name.split('_')[0] }})
+                            </a>
+                        </li>
+                    </ul>
                 {% endfor %}
-                </ul>
-            {% endfor %}
+            {% else %}
+                <h2>No reports found</h2>
+            {% endif %}
         </div>
     </section>
 </body>
