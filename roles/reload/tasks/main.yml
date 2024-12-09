@@ -7,19 +7,19 @@
 - name: Reset the connection
   ansible.builtin.meta: reset_connection
 
-# - name: Wait for the network device to reload
-#   ansible.builtin.wait_for_connection:
-#     delay: 10
+- name: Wait for the network device to reload
+  ansible.builtin.wait_for_connection:
+    delay: 10
 
-- name: Wait for SSH port availability
-  ansible.builtin.wait_for:
-    host: "{{ inventory_hostname }}"
-    port: 22
-    timeout: 300
-    state: started
-  register: ssh_result
-  delegate_to: localhost
-  when: ping_result is success
+# - name: Wait for SSH port availability
+#   ansible.builtin.wait_for:
+#     host: "{{ inventory_hostname }}"
+#     port: 22
+#     timeout: 300
+#     state: started
+#   register: ssh_result
+#   delegate_to: localhost
+#   when: ping_result is success
 
 - name: Get the device uptime
   vars:
