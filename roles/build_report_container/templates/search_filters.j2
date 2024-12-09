@@ -1,0 +1,43 @@
+{# roles/build_report_container/templates/search_filters.j2 #}
+<div class="search-filters mb-4">
+  <div class="row g-3">
+    <div class="col-md-4">
+      <div class="input-group">
+        <span class="input-group-text"><i class="fas fa-search"></i></span>
+        <input type="text" class="form-control" id="searchInput"
+          placeholder="Search {{ search_placeholder|default('reports') }}...">
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="input-group">
+        <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+        <select class="form-control" id="dateFilter">
+          {% for option in date_options|default(['all', 'week', 'month']) %}
+          <option value="{{ option }}">
+            {% if option == 'all' %}All Dates
+            {% elif option == 'week' %}Last Week
+            {% elif option == 'month' %}Last Month
+            {% else %}{{ option|title }}
+            {% endif %}
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="input-group">
+        <span class="input-group-text"><i class="fas fa-filter"></i></span>
+        <select class="form-control" id="typeFilter">
+          {% set type_options = [
+          ('all', 'All Types'),
+          ('pre', 'Pre-Patching'),
+          ('post', 'Post-Patching')
+          ] %}
+          {% for value, label in type_options %}
+          <option value="{{ value }}">{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+  </div>
+</div>

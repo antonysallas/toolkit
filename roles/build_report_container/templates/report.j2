@@ -1,59 +1,47 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Network Automation Report</title>
-  <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Open+Sans" />
-  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-  <link rel="stylesheet" href="../css/main.css">
-  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
-<script>
-$(function() {
-$( "#accordion > div" ).accordion({
-    header: "h3",
-    active: false,
-collapsible: true
-});
-});
-</script>
-</head>
-<body>
-  {% include 'header.j2' %}
-  <div class="container-fluid mt-4">
-    <section>
-      <div class="text-center mb-5">
-        <h1 class="display-4">Switch Firmware {% if report_type == 'pre' %}Pre{% else %}Post{% endif %}-Patching Report</h1>
-      </div>
+{# roles/build_report_container/templates/report.j2 #}
+{% extends "base.j2" %}
 
-      <div class="accordion" id="networkAccordion">
-        <table class="table table-striped table-hover">
-          <thead class="table-dark sticky-top">
-            <tr>
-              <th scope="col" style="width: 25%">Network Device</th>
-              <th scope="col" style="width: 25%">Layer 1</th>
-              <th scope="col" style="width: 25%">Layer 2</th>
-              <th scope="col" style="width: 25%">Layer 3</th>
-            </tr>
-          </thead>
-          <tbody>
+{% block breadcrumb %}
+Home / Reports / {{ report_type|title }} Patching Report
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+  <section>
+    <div class="text-center mb-5">
+      <h1 class="display-4">Switch Firmware {% if report_type == 'pre' %}Pre{% else %}Post{% endif %}-Patching Report
+      </h1>
+    </div>
+
+    <div class="accordion" id="networkAccordion">
+      <table class="table table-striped table-hover">
+        <thead class="table-dark sticky-top">
+          <tr>
+            <th scope="col" style="width: 25%">Network Device</th>
+            <th scope="col" style="width: 25%">Layer 1</th>
+            <th scope="col" style="width: 25%">Layer 2</th>
+            <th scope="col" style="width: 25%">Layer 3</th>
+          </tr>
+        </thead>
+        <tbody>
           {% for network_switch in groups['network']|sort %}
           {% if hostvars[network_switch].ansible_facts.network_resources is defined %}
-            <tr>
-              <td>
-                <div class="card">
-                  <div class="card-body">
-                    <div class="d-flex align-items-center mb-3">
-                      <img class="router_image me-3" src="../network-switch-{{ report_type }}-patching.png" alt="picture of network device" style="width: 50px;">
-                      <h5 class="card-title mb-0">{{ hostvars[network_switch].ansible_net_hostname }}</h5>
-                    </div>
-                    <div id="net_info_div">
+          <tr>
+            <td>
+              <div class="card">
+                <div class="card-body">
+                  <div class="d-flex align-items-center mb-3">
+                    <img class="router_image me-3" src="../network-switch-{{ report_type }}-patching.png"
+                      alt="picture of network device" style="width: 50px;">
+                    <h5 class="card-title mb-0">{{ hostvars[network_switch].ansible_net_hostname }}</h5>
+                  </div>
+                  <div id="net_info_div">
                     <table class="table table-sm">
                       <tbody>
                         <tr>
                           <td class="fw-bold">Platform</td>
-                          <td>{% set ansible_network_os = hostvars[network_switch]['ansible_net_system'] %}{{ vendor[ansible_network_os]}} {{hostvars[network_switch]['ansible_net_system'] }}</td>
+                          <td>{% set ansible_network_os = hostvars[network_switch]['ansible_net_system'] %}{{
+                            vendor[ansible_network_os]}} {{hostvars[network_switch]['ansible_net_system'] }}</td>
                         </tr>
                         <tr>
                           <td class="fw-bold">Code Version</td>
@@ -71,32 +59,30 @@ collapsible: true
                     </table>
 
                     {% include 'ansible.j2' %}
-                    </div>
-  </td>
+                  </div>
+            </td>
 
             <td>
-            {% include 'interfaces.j2' %}
+              {% include 'interfaces.j2' %}
             </td>
             <td>
-            {% include 'vlans.j2' %}
-            {% include 'lldp_interfaces.j2' %}
-            {% include 'l2_interfaces.j2' %}
+              {% include 'vlans.j2' %}
+              {% include 'lldp_interfaces.j2' %}
+              {% include 'l2_interfaces.j2' %}
             </td>
             <td>
-            {% include 'l3_interfaces.j2' %}
-            {% include 'lacp.j2' %}
-            {% include 'static.j2' %}
-            {% include 'bgp.j2' %}
-            {% include 'bgp_address_family.j2' %}
-            {% include 'ospf.j2' %}
+              {% include 'l3_interfaces.j2' %}
+              {% include 'lacp.j2' %}
+              {% include 'static.j2' %}
+              {% include 'bgp.j2' %}
+              {% include 'bgp_address_family.j2' %}
+              {% include 'ospf.j2' %}
             </td>
-        </tr>
-{% endif %}
-{% endfor %}
-    </tbody>
-</table>
-</section>
+          </tr>
+          {% endif %}
+          {% endfor %}
+        </tbody>
+      </table>
+  </section>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+{% endblock %}

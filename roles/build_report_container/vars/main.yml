@@ -1,3 +1,4 @@
+# vars/main.yml
 report_dir: /data/reports
 web_host: ansible-1
 web_port: 8088

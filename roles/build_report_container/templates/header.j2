@@ -1,18 +1,10 @@
 {# roles/build_report_container/templates/header.j2 #}
 <div class="wrapper">
-    <header>
-      <div class="header-container">
-        <a href="https://ansible.com">
-          <img
-            class="header-logo"
-            {% if date_stamp %}
-            src="../redhat-ansible-logo.svg"
-            {% else %}
-            src="redhat-ansible-logo.svg"
-            {% endif %}
-            title="Red Hat Ansible"
-            alt="Red Hat Ansible"
-          />
-        </a>
-      </div>
-    </header>
+  <header>
+    <div class="header-container">
+      <a href="https://ansible.com">
+        <img class="header-logo" {% if date_stamp %} src="../redhat-ansible-logo.svg" {% else %}
+          src="redhat-ansible-logo.svg" {% endif %} title="Red Hat Ansible" alt="Red Hat Ansible" />
+      </a>
+    </div>
+  </header>
