@@ -69,6 +69,12 @@
     - "redhat-ansible-logo.svg"
     - "router.png"
 
+- name: Debug hostvars
+  ansible.builtin.debug:
+    msg: "{{ hostvars[inventory_hostname] }}"
+
+# Then modify the task to use correct variable
 - name: Display link to inventory report
   ansible.builtin.debug:
-    msg: "Please go to http://{{ hostvars[web_host].ansible_host }}:{{ web_port }}"
+    msg: "Report available at http://{{ ansible_facts['default_ipv4']['address'] }}:{{ web_port }}/index.html"
+  when: ansible_facts['default_ipv4'] is defined
