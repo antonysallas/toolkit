@@ -13,6 +13,22 @@
     insertafter: '^#Listen '
     line: 'Listen {{ web_port }}'
 
+# Add these tasks before starting httpd
+- name: Install policycoreutils-python for SELinux port management
+  become: true
+  ansible.builtin.yum:
+    name: policycoreutils-python-utils
+    state: present
+
+- name: Allow httpd to listen on custom port
+  become: true
+  ansible.builtin.shell: semanage port -a -t http_port_t -p tcp {{ web_port }}
+  register: semanage_result
+  failed_when:
+  - semanage_result.rc != 0
+  - '"already defined" not in semanage_result.stderr'
+  changed_when: semanage_result.rc == 0
+
 - name: Set nis_enabled flag on and keep it persistent across reboots
   become: true
   ansible.posix.seboolean:
