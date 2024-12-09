@@ -1,9 +1,29 @@
 ---
 # roles/build_report_container/tasks/main.yml
+- name: Gather facts
+  ansible.builtin.setup:
+    gather_subset:
+    - '!all'
+    - '!min'
+    - date_time
+
 - name: Get timestamp
   ansible.builtin.set_fact:
     date_stamp: "{{ ansible_date_time.date | regex_replace('-','') }}"
     timestamp: "{{ ansible_date_time.iso8601_basic_short | regex_replace(':','') }}"
+  when: ansible_date_time is defined
+
+# Alternative approach using shell if setup fails
+- name: Get timestamp (fallback)
+  ansible.builtin.shell: "date +'%Y%m%d'"
+  register: date_output
+  when: ansible_date_time is not defined
+
+- name: Set timestamp from shell
+  ansible.builtin.set_fact:
+    date_stamp: "{{ date_output.stdout }}"
+    timestamp: "{{ date_output.stdout }}{{ ansible_date_time.hour }}{{ ansible_date_time.minute }}{{ ansible_date_time.second }}"
+  when: ansible_date_time is not defined
 
 - name: Creates directory
   ansible.builtin.file:
