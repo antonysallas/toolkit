@@ -29,6 +29,7 @@
             <td>{{l2_interface['trunk']['trunk_allowed_vlans']|default("Not Configured")}}</td>
           </tr>
           {% endfor %}
+          {% endif %}
         </tbody>
       </table>
       {% elif hostvars[network_switch]['ansible_network_resources']['l2_interfaces'] is defined and
