@@ -107,19 +107,33 @@
                 </div>
               </div>
             </td>
-            <td>{% include '06_interfaces.j2' %}</td>
             <td>
-              {% include '07_vlans.j2' %}
-              {% include '08_lldp_interfaces.j2' %}
-              {% include '09_l2_interfaces.j2' %}
+              <div class="card">
+                <div class="card-body">
+                  {% include '06_interfaces.j2' %}
+                </div>
+              </div>
             </td>
             <td>
-              {% include '10_l3_interfaces.j2' %}
-              {% include '11_lacp.j2' %}
-              {% include '12_static.j2' %}
-              {% include '13_bgp.j2' %}
-              {% include '14_bgp_address_family.j2' %}
-              {% include '15_ospf.j2' %}
+              <div class="card">
+                <div class="card-body">
+                  {% include '07_vlans.j2' %}
+                  {% include '08_lldp_interfaces.j2' %}
+                  {% include '09_l2_interfaces.j2' %}
+                </div>
+              </div>
+            </td>
+            <td>
+              <div class="card">
+                <div class="card-body">
+                  {% include '10_l3_interfaces.j2' %}
+                  {% include '11_lacp.j2' %}
+                  {% include '12_static.j2' %}
+                  {% include '13_bgp.j2' %}
+                  {% include '14_bgp_address_family.j2' %}
+                  {% include '15_ospf.j2' %}
+                </div>
+              </div>
             </td>
           </tr>
           {% endif %}
