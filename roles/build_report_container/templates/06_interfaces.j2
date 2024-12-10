@@ -27,7 +27,7 @@
     </tbody>
     <div>
   </table>
-  {% elif hostvars[network_switch]['ansible_network_resources']['interfaces'] is defined and
+  {% if hostvars[network_switch]['ansible_network_resources']['interfaces'] is defined and
   hostvars[network_switch]['ansible_network_resources']['interfaces']|length == 0 %}
   No interfaces configured on this device
   {% else %}
