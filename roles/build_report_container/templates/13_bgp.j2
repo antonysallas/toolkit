@@ -5,9 +5,9 @@
   <div>
     <h3>BGP Global Info</h3>
     <div class="net_content">
-      {% if hostvars[network_switch]['ansible_network_resources']['bgp_global'] is defined and
-      hostvars[network_switch]['ansible_network_resources']['bgp_global']|length > 0 %}
       <table class="table table-sm table-striped">
+        {% if hostvars[network_switch]['ansible_network_resources']['bgp_global'] is defined and
+        hostvars[network_switch]['ansible_network_resources']['bgp_global']|length > 0 %}
         <table id="subtable">
           <thead>
             <tr>
