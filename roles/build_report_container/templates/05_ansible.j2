@@ -4,41 +4,33 @@
   <div>
     <h3>Ansible Automation Platform Info</h3>
     <div class="net_content">
-      <table class="net_info">
-        <tbody>
-          <tr>
-            <td>Ansible user</td>
-            <td class="sub_net_info">{{ hostvars[network_switch]['ansible_user'] | default("Unknown") }}</td>
-          </tr>
-          <tr>
-            <td>Transport</td>
-            <td class="sub_net_info">{% set ansible_connection = hostvars[network_switch]['ansible_net_api'] %}{{
-              transport[ansible_connection] }}</td>
-          </tr>
-          <tr>
-            <td>Ansible Mgmt IP</td>
-            <td class="sub_net_info">{{ hostvars[network_switch]['ansible_host']|default("Unknown") }}</td>
-          </tr>
-          <tr>
-            <td>Ansible groups</td>
-            <td class="sub_net_info">{% for group in hostvars[network_switch]['group_names'] %}{{ group }} {% endfor %}
-            </td>
-          </tr>
-          <tr>
-            <td>Ansible core version</td>
-            <td class="sub_net_info">{% for group in
-              hostvars[network_switch]['ansible_version']['string']|default("Unknown") %}{{ group }} {% endfor %}</td>
-          </tr>
-          <tr>
-            <td>Ansible Python</td>
-            <td class="sub_net_info">{{ hostvars[network_switch]['ansible_playbook_python']|default("Unknown") }} </td>
-          </tr>
-          <tr>
-            <td>Python version</td>
-            <td class="sub_net_info">{{ hostvars[network_switch]['ansible_net_python_version']|default("Unknown") }}
-            </td>
-          </tr>
-        </tbody>
+      <table class="table table-sm table-striped">
+        <table id="subtable">
+          <thead>
+            <tr>
+              <th>Ansible user</th>
+              <th>Transport</th>
+              <th>Ansible Mgmt IP</th>
+              <th>Ansible groups</th>
+              <th>Ansible core version</th>
+              <th>Ansible Python</th>
+              <th>Python version</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{{ hostvars[network_switch]['ansible_user'] | default("Unknown") }}</td>
+              <td>{% set ansible_connection = hostvars[network_switch]['ansible_net_api'] %}{{
+                transport[ansible_connection] }}</td>
+              <td>{{ hostvars[network_switch]['ansible_host']|default("Unknown") }}</td>
+              <td>{% for group in hostvars[network_switch]['group_names'] %}{{ group }} {% endfor %}</td>
+              <td>{% for group in hostvars[network_switch]['ansible_version']['string']|default("Unknown") %}{{ group }}
+                {% endfor %}</td>
+              <td>{{ hostvars[network_switch]['ansible_playbook_python']|default("Unknown") }} </td>
+              <td>{{ hostvars[network_switch]['ansible_net_python_version']|default("Unknown") }}</td>
+            </tr>
+          </tbody>
+        </table>
       </table>
     </div>
   </div>
