@@ -1,0 +1,191 @@
+{# roles/build_report_container/templates/04_report.j2 #}
+{% extends "00_base.j2" %}
+
+{% block title %}
+{{ report_type|title }} Patching Report - {{ date_stamp }}
+{% endblock %}
+
+{% block breadcrumb %}
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb mb-0">
+    <li class="breadcrumb-item"><a href="{% if date_stamp %}../{% endif %}index.html">Home</a></li>
+    <li class="breadcrumb-item"><a href="{% if date_stamp %}../{% endif %}#{{ date_stamp }}">Reports</a></li>
+    <li class="breadcrumb-item active" aria-current="page">{{ report_type|title }} Patching Report</li>
+  </ol>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+  <section>
+    {# Report Header #}
+    <div class="text-center mb-5">
+      <h1 class="display-4">
+        Switch Firmware {% if report_type == 'pre' %}Pre{% else %}Post{% endif %}-Patching Report
+      </h1>
+      <p class="text-muted">Generated on {{ date_stamp }}</p>
+    </div>
+
+    {# Report Summary #}
+    <div class="row mb-4">
+      <div class="col-md-3">
+        <div class="card">
+          <div class="card-body text-center">
+            <h5 class="card-title">Total Devices</h5>
+            <p class="h2">{{ groups['network']|length }}</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card">
+          <div class="card-body text-center">
+            <h5 class="card-title">Status</h5>
+            <p class="h4">{{ report_type|title }} Patching</p>
+          </div>
+        </div>
+      </div>
+      {# Add more summary cards as needed #}
+    </div>
+
+    {# Search and Filter Controls #}
+    <div class="mb-4">
+      <div class="input-group">
+        <span class="input-group-text"><i class="fas fa-search"></i></span>
+        <input type="text" class="form-control" id="deviceSearch" placeholder="Search devices...">
+      </div>
+    </div>
+
+    {# Main Content Table #}
+    <div class="table-responsive">
+      <table class="table table-striped table-hover" id="networkTable">
+        <thead class="table-dark sticky-top">
+          <tr>
+            <th scope="col" style="width: 25%">Network Device</th>
+            <th scope="col" style="width: 25%">Layer 1</th>
+            <th scope="col" style="width: 25%">Layer 2</th>
+            <th scope="col" style="width: 25%">Layer 3</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for network_switch in groups['network']|sort %}
+          {% if hostvars[network_switch].ansible_facts.network_resources is defined %}
+          <tr class="device-row">
+            <td>
+              <div class="card">
+                <div class="card-body">
+                  <div class="d-flex align-items-center mb-3">
+                    <img class="router_image me-3" src="../network-switch-{{ report_type }}-patching.png"
+                      alt="Network switch icon" width="50" height="50">
+                    <h5 class="card-title mb-0">{{ hostvars[network_switch].ansible_net_hostname }}</h5>
+                  </div>
+                  <div class="device-info">
+                    <table class="table table-sm">
+                      <tbody>
+                        <tr>
+                          <td class="fw-bold">Platform</td>
+                          <td>
+                            {% set ansible_network_os = hostvars[network_switch]['ansible_net_system'] %}
+                            {{ vendor[ansible_network_os] }} {{ hostvars[network_switch]['ansible_net_system'] }}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="fw-bold">Code Version</td>
+                          <td>{{ hostvars[network_switch]['ansible_net_version'] }}</td>
+                        </tr>
+                        <tr>
+                          <td class="fw-bold">Model</td>
+                          <td>{{ hostvars[network_switch]['ansible_net_model'] }}</td>
+                        </tr>
+                        <tr>
+                          <td class="fw-bold">Serial Number</td>
+                          <td>{{ hostvars[network_switch]['ansible_net_serialnum'] }}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    {% include '05_ansible.j2' %}
+                  </div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <div class="card">
+                <div class="card-body">
+                  {% include '06_interfaces.j2' %}
+                </div>
+              </div>
+            </td>
+            <td>
+              <div class="card">
+                <div class="card-body">
+                  {% include '07_vlans.j2' %}
+                  {% include '08_lldp_interfaces.j2' %}
+                  {% include '09_l2_interfaces.j2' %}
+                </div>
+              </div>
+            </td>
+            <td>
+              <div class="card">
+                <div class="card-body">
+                  {% include '10_l3_interfaces.j2' %}
+                  {% include '11_lacp.j2' %}
+                  {% include '12_static.j2' %}
+                  {% include '13_bgp.j2' %}
+                  {% include '14_bgp_address_family.j2' %}
+                  {% include '15_ospf.j2' %}
+                </div>
+              </div>
+            </td>
+          </tr>
+          {% endif %}
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    {# No Data Message #}
+    {% if not groups['network']|length %}
+    <div class="alert alert-info">
+      No network devices found in the inventory.
+    </div>
+    {% endif %}
+  </section>
+</div>
+
+{# Loading Indicator #}
+<div id="loadingIndicator" class="position-fixed top-0 start-0 w-100 h-100 d-none">
+  <div class="d-flex justify-content-center align-items-center h-100 bg-white bg-opacity-75">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // Search functionality
+    const searchInput = document.getElementById('deviceSearch');
+    const deviceRows = document.querySelectorAll('.device-row');
+
+    searchInput.addEventListener('input', function () {
+      const searchTerm = this.value.toLowerCase();
+      deviceRows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(searchTerm) ? '' : 'none';
+      });
+    });
+
+    // Loading indicator
+    window.addEventListener('beforeunload', function () {
+      document.getElementById('loadingIndicator').classList.remove('d-none');
+    });
+
+    // Initialize tooltips
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+  });
+</script>
+{% endblock %}
