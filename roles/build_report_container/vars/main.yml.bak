@@ -1,4 +1,5 @@
-file_path: /data/report
+# vars/main.yml
+report_dir: /data/reports
 web_host: ansible-1
 web_port: 8088
 # multi key, same value lookup for cisco

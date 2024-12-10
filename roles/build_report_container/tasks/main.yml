@@ -1,31 +1,7 @@
 ---
-# roles/build_report_container/tasks/main.yml
-- name: Get timestamp
-  run_once: true
-  ansible.builtin.set_fact:
-    timestamp: "{{ lookup('pipe', 'date +%Y%m%d%H%M%S') }}"
-    date_stamp: "{{ lookup('pipe', 'date +%Y%m%d') }}"
-    readable_date: "{{ lookup('pipe', 'date \"+%B %d, %Y\"') }}"
-
-- name: Debug timestamp and paths
-  ansible.builtin.debug:
-    msg:
-    - "Timestamp: {{ timestamp }}"
-    - "Date stamp: {{ date_stamp }}"
-    - "Readable date: {{ readable_date }}"
-    - "Report type: {{ report_type }}"
-    - "Report directory: {{ report_dir }}"
-
-- name: Create report directory
+- name: Creates directory
   ansible.builtin.file:
-    path: "{{ report_dir }}"
-    state: directory
-    mode: "775"
-    recurse: true
-
-- name: Create dated directory
-  ansible.builtin.file:
-    path: "{{ report_dir }}/{{ date_stamp }}"
+    path: "{{ file_path }}"
     state: directory
     mode: "775"
     recurse: true
@@ -33,79 +9,44 @@
 - name: Include selinux role
   vars:
     selinux_fcontexts:
-      - {target: '{{ report_dir }}(/.*)?', setype: 'httpd_sys_content_t', state: 'present'}
+      - {target: '{{ file_path }}(/.*)?', setype: 'httpd_sys_content_t', state: 'present'}
   ansible.builtin.include_role:
     name: fedora.linux_system_roles.selinux
-
-- name: Debug file paths
-  ansible.builtin.debug:
-    msg:
-    - "File path: {{ report_dir }}"
-    - "Full glob path: {{ report_dir + '/*/' }}"
 
 - name: Ensure Nginx container is running
   containers.podman.podman_container:
     name: nginx_container
-    image: docker.io/nginx:stable-alpine3.20-slim
+    image: docker.io/nginx:stable-alpine3.17-slim
     state: started
     ports:
       - "{{ web_port }}:80"
     volumes:
-      - "{{ report_dir }}:/usr/share/nginx/html:Z"
-    restart_policy: always
-    # recreate: true
+      - "{{ file_path }}:/usr/share/nginx/html:Z"
+    recreate: true
 
-- name: Ensure report directory permissions
-  ansible.builtin.file:
-    path: "{{ report_dir }}"
-    state: directory
-    mode: "775"
-    recurse: true
-
-- name: Create HTML report from template
-  template:
-    src: 04_report.j2
-    dest: "{{ report_dir }}/{{ date_stamp }}/{{ timestamp }}_switch-firmware-{{ report_type }}-patching-report.html"
-    mode: '0644'
-  vars:
-    date_stamp: "{{ date_stamp }}"
-
-- name: List available reports (debug)
-  ansible.builtin.find:
-    paths: "{{ report_dir }}"
-    recurse: true
-    patterns: "*-patching-report.html"
-    file_type: file
-  register: found_reports
-
-- name: Debug found reports
-  ansible.builtin.debug:
-    var: found_reports
-
-- name: Create main index.html file
-  template:
-    src: 03_index.j2
-    dest: "{{ report_dir }}/index.html"
-    mode: '0644'
+- name: Create HTML report
+  ansible.builtin.template:
+    src: report.j2
+    dest: "{{ file_path }}/index.html"
+    mode: "644"
 
 - name: Copy CSS over
   ansible.builtin.copy:
     src: "css"
-    dest: "{{ report_dir }}"
+    dest: "{{ file_path }}"
     directory_mode: true
     mode: "775"
 
 - name: Copy CSS over
   ansible.builtin.copy:
     src: "{{ item }}"
-    dest: "{{ report_dir }}"
+    dest: "{{ file_path }}"
     directory_mode: true
     mode: "644"
   loop:
+    - "webpage_logo.png"
     - "redhat-ansible-logo.svg"
     - "router.png"
-    - "network-switch-pre-patching.png"
-    - "network-switch-post-patching.png"
 
 - name: Retrieve public IP address
   ansible.builtin.command: curl https://ifconfig.me
