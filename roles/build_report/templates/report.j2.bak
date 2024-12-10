@@ -18,7 +18,7 @@ collapsible: true
 </script>
 </head>
 <body>
-  {% include 'header.j2' %}
+  {% include '01_header.j2' %}
 <section>
 <center>
 <h1>Ansible Network Automation Example Report</h1>
@@ -63,7 +63,7 @@ collapsible: true
               </table>
 
 
-            {% include 'ansible.j2' %}
+            {% include '05_ansible.j2' %}
           </div>
 
 
@@ -71,20 +71,20 @@ collapsible: true
             </td>
 
             <td>
-            {% include 'interfaces.j2' %}
+            {% include '06_interfaces.j2' %}
             </td>
             <td>
-            {% include 'vlans.j2' %}
-            {% include 'lldp_interfaces.j2' %}
-            {% include 'l2_interfaces.j2' %}
+            {% include '07_vlans.j2' %}
+            {% include '08_lldp_interfaces.j2' %}
+            {% include '09_l2_interfaces.j2' %}
             </td>
             <td>
-            {% include 'l3_interfaces.j2' %}
-            {% include 'lacp.j2' %}
-            {% include 'static.j2' %}
-            {% include 'bgp.j2' %}
-            {% include 'bgp_address_family.j2' %}
-            {% include 'ospf.j2' %}
+            {% include '10_l3_interfaces.j2' %}
+            {% include '11_lacp.j2' %}
+            {% include '12_static.j2' %}
+            {% include '13_bgp.j2' %}
+            {% include '14_bgp_address_family.j2' %}
+            {% include '15_ospf.j2' %}
             </td>
         </tr>
 {% endif %}

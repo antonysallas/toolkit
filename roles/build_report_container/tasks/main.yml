@@ -64,7 +64,7 @@
 
 - name: Create HTML report from template
   template:
-    src: report.j2
+    src: 04_report.j2
     dest: "{{ report_dir }}/{{ date_stamp }}/{{ timestamp }}_switch-firmware-{{ report_type }}-patching-report.html"
     mode: '0644'
   vars:
@@ -84,7 +84,7 @@
 
 - name: Create main index.html file
   template:
-    src: index.j2
+    src: 03_index.j2
     dest: "{{ report_dir }}/index.html"
     mode: '0644'
 

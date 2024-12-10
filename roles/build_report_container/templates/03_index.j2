@@ -1,11 +1,11 @@
-{# roles/build_report_container/templates/index.j2 #}
-{% extends "base.j2" %}
+{# roles/build_report_container/templates/03_index.j2 #}
+{% extends "00_base.j2" %}
 
 {% block breadcrumb %}
 {% endblock %}
 
 {% block content %}
-{% include 'search_filters.j2' with context %}
+{% include '02_search_filters.j2' with context %}
 
 <div class="container mt-4"> {# Remove fluid for narrower width #}
   <section>
